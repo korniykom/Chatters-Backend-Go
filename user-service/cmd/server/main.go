@@ -12,6 +12,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Get("/health", handler.Health)
 	r.Get("/version", handler.Version)
+	r.Get("/ping", handler.Ping)
 
 	fmt.Println("Starting server on port 8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
