@@ -1,28 +1,34 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
+	"github.com/korniykom/Chatters-Backend-Go/internal/repository/memory"
 )
 
 type AuthService struct {
-	users []domain.User
+	repository *memory.UserRepository
 }
 
-func NewAuthService() *AuthService {
-	return &AuthService{}
+func NewAuthService(repository *memory.UserRepository) *AuthService {
+	return &AuthService{repository: repository}
 }
 
 func (s *AuthService) Register(req domain.RegisterRequest) error {
+
+	savedUser, err := s.repository.FindByEmail(req.Email)
+
+	if err != nil {
+		return err
+	}
+
+	if savedUser != nil {
+		return ErrEmailAlreadyExists
+	}
+
 	user := domain.User{
 		Username: req.Username,
 		Email:    req.Email,
 	}
 
-	s.users = append(s.users, user)
-
-	fmt.Println(s.users)
-
-	return nil
+	return s.repository.Save(user)
 }

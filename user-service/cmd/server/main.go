@@ -6,11 +6,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/korniykom/Chatters-Backend-Go/internal/handler"
+	"github.com/korniykom/Chatters-Backend-Go/internal/repository/memory"
 	"github.com/korniykom/Chatters-Backend-Go/internal/service"
 )
 
 func main() {
-	authService := service.NewAuthService()
+	userRepository := memory.NewUserRepository()
+	authService := service.NewAuthService(userRepository)
 	authHandler := handler.NewAuthHandler(authService)
 
 	r := chi.NewRouter()
