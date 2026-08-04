@@ -2,14 +2,18 @@ package service
 
 import (
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
-	"github.com/korniykom/Chatters-Backend-Go/internal/repository/memory"
 )
 
-type AuthService struct {
-	repository *memory.UserRepository
+type UserRepository interface {
+	FindByEmail(email string) (*domain.User, error)
+	Save(user domain.User) error
 }
 
-func NewAuthService(repository *memory.UserRepository) *AuthService {
+type AuthService struct {
+	repository UserRepository
+}
+
+func NewAuthService(repository UserRepository) *AuthService {
 	return &AuthService{repository: repository}
 }
 
