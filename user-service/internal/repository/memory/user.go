@@ -1,6 +1,8 @@
 package memory
 
 import (
+	"database/sql"
+
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
 )
 
@@ -8,7 +10,7 @@ type UserRepository struct {
 	users []domain.User
 }
 
-func NewUserRepository() *UserRepository {
+func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{}
 }
 
