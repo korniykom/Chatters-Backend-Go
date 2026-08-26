@@ -3,12 +3,12 @@ package config
 import "os"
 
 type Config struct {
-	Port        string
-	DB_Host     string
-	DB_Port     string
-	DB_User     string
-	DB_Password string
-	DB_Name     string
+	Port       string
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
 }
 
 func Load() Config {
@@ -44,11 +44,11 @@ func Load() Config {
 	}
 
 	return Config{
-		Port:        port,
-		DB_Host:     dbHost,
-		DB_Port:     dbPort,
-		DB_User:     dbUser,
-		DB_Password: dbPassword,
-		DB_Name:     dbName,
+		Port:       port,
+		DBHost:     dbHost,
+		DBPort:     dbPort,
+		DBUser:     dbUser,
+		DBPassword: dbPassword,
+		DBName:     dbName,
 	}
 }
