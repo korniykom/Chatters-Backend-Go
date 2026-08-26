@@ -9,7 +9,7 @@ import (
 	"github.com/korniykom/Chatters-Backend-Go/internal/config"
 	"github.com/korniykom/Chatters-Backend-Go/internal/database"
 	"github.com/korniykom/Chatters-Backend-Go/internal/handler"
-	"github.com/korniykom/Chatters-Backend-Go/internal/repository/memory"
+	"github.com/korniykom/Chatters-Backend-Go/internal/repository/postgres"
 	"github.com/korniykom/Chatters-Backend-Go/internal/service"
 )
 
@@ -26,7 +26,7 @@ func main() {
 	}
 	defer db.Close()
 
-	userRepository := memory.NewUserRepository()
+	userRepository := postgres.NewUserRepository(db)
 	authService := service.NewAuthService(userRepository)
 	authHandler := handler.NewAuthHandler(authService)
 

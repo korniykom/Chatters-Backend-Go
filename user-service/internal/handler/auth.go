@@ -24,7 +24,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.Register(req); err != nil {
+	if err := h.service.Register(r.Context(), req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

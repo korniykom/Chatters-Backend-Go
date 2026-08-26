@@ -1,12 +1,14 @@
 package service
 
 import (
+	"context"
+
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
 )
 
 type UserRepository interface {
-	FindByEmail(email string) (*domain.User, error)
-	Save(user domain.User) error
+	FindByEmail(ctx context.Context, email string) (*domain.User, error)
+	Save(ctx context.Context, user domain.User) error
 }
 
 type AuthService struct {
@@ -17,16 +19,18 @@ func NewAuthService(repository UserRepository) *AuthService {
 	return &AuthService{repository: repository}
 }
 
-func (s *AuthService) Register(req domain.RegisterRequest) error {
-
-	savedUser, err := s.repository.FindByEmail(req.Email)
+func (s *AuthService) Register(
+	ctx context.Context,
+	req domain.RegisterRequest,
+) error {
+	savedUser, err := s.repository.FindByEmail(ctx, req.Email)
 
 	if err != nil {
 		return err
 	}
 
 	if savedUser != nil {
-		return ErrEmailAlreadyExists
+		return ErrUserAlreadyExists
 	}
 
 	user := domain.User{
@@ -34,5 +38,5 @@ func (s *AuthService) Register(req domain.RegisterRequest) error {
 		Email:    req.Email,
 	}
 
-	return s.repository.Save(user)
+	return s.repository.Save(ctx, user)
 }
