@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
+	"github.com/korniykom/Chatters-Backend-Go/internal/validation"
 )
 
 type UserRepository interface {
@@ -23,6 +24,16 @@ func (s *AuthService) Register(
 	ctx context.Context,
 	req domain.RegisterRequest,
 ) error {
+	req = validation.NormalizeRegistrationRequest(req)
+	
+	if err := validation.ValidateUsername(req.Username); err != nil {
+		return err
+	}
+
+	if err := validation.ValidateEmail(req.Email); err != nil {
+		return err
+	}
+
 	savedUser, err := s.repository.FindByEmail(ctx, req.Email)
 
 	if err != nil {
