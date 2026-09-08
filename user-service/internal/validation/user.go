@@ -6,33 +6,22 @@ import (
 	"strings"
 
 	"github.com/korniykom/Chatters-Backend-Go/internal/domain"
-	"github.com/korniykom/Chatters-Backend-Go/internal/service"
 )
 
 var usernameRegex = regexp.MustCompile(`^[a-zA-Z0-9_]{3,32}$`)
 
-func ValidateUsername(username string) error {
-	if !usernameRegex.MatchString(username) {
-		return service.ErrInvalidUsername
-	}
-
-	return nil
+func ValidateUsername(username string) bool {
+	return usernameRegex.MatchString(username)
 }
 
-func ValidateEmail(email  string) error {
-
+func ValidateEmail(email string) bool {
 	address, err := mail.ParseAddress(email)
 	if err != nil {
-		return service.ErrInvalidEmail
+		return false
 	}
 
-	if address.Address != email {
-		return service.ErrInvalidEmail
-	}
-
-	return nil
+	return address.Address == email
 }
-
 
 func NormalizeRegistrationRequest(
 	req domain.RegisterRequest,

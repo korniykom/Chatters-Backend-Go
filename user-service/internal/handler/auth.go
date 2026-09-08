@@ -25,7 +25,9 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.Register(r.Context(), req); err != nil {
+	user, err := h.service.Register(r.Context(), req)
+
+	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrUserAlreadyExists):
 			http.Error(w, err.Error(), http.StatusConflict)
@@ -37,7 +39,11 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := domain.RegisterResponse{Message: "User registered successfully"}
+	response := domain.RegisterResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

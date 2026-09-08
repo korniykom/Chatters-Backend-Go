@@ -19,16 +19,21 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 func (r *UserRepository) Save(
 	ctx context.Context,
 	user domain.User,
-) error {
-	_, err := r.db.Exec(
+) (*domain.User, error) {
+	err := r.db.QueryRow(
 		ctx,
 		`INSERT INTO users (username, email)
-		 VALUES ($1, $2)`,
+         VALUES ($1, $2)
+         RETURNING id`,
 		user.Username,
 		user.Email,
-	)
+	).Scan(&user.ID)
 
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
 }
 
 func (r *UserRepository) FindByEmail(

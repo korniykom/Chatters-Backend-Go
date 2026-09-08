@@ -9,7 +9,7 @@ import (
 
 type UserRepository interface {
 	FindByEmail(ctx context.Context, email string) (*domain.User, error)
-	Save(ctx context.Context, user domain.User) error
+	Save(ctx context.Context, user domain.User) (*domain.User, error)
 }
 
 type AuthService struct {
@@ -23,25 +23,25 @@ func NewAuthService(repository UserRepository) *AuthService {
 func (s *AuthService) Register(
 	ctx context.Context,
 	req domain.RegisterRequest,
-) error {
+) (*domain.User, error) {
 	req = validation.NormalizeRegistrationRequest(req)
-	
-	if err := validation.ValidateUsername(req.Username); err != nil {
-		return err
+
+	if !validation.ValidateUsername(req.Username) {
+		return nil, ErrInvalidUsername
 	}
 
-	if err := validation.ValidateEmail(req.Email); err != nil {
-		return err
+	if !validation.ValidateEmail(req.Email) {
+		return nil, ErrInvalidEmail
 	}
 
 	savedUser, err := s.repository.FindByEmail(ctx, req.Email)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if savedUser != nil {
-		return ErrUserAlreadyExists
+		return nil, ErrUserAlreadyExists
 	}
 
 	user := domain.User{
@@ -49,5 +49,11 @@ func (s *AuthService) Register(
 		Email:    req.Email,
 	}
 
-	return s.repository.Save(ctx, user)
+	createdUser, err := s.repository.Save(ctx, user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdUser, nil
 }
